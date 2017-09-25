@@ -4,7 +4,7 @@
 import re
 
 LANGUAGES_JSON_FILENAME = "languages.json"
-DATASET_DIR = "dataset"
+DATASET_DIR = "wikidataset"
 MODEL_JSON_FILENAME = "model.json"
 MODEL_WEIGHT_FILENAME = "model.h5"
 

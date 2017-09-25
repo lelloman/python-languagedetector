@@ -11,7 +11,7 @@ import numpy
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
-from keras.layers import LSTM
+from keras.layers import SimpleRNN
 from keras.callbacks import Callback
 from os import listdir
 from os.path import join as path
@@ -81,9 +81,9 @@ def get_model():
         model = load_model()
     else:
         model = Sequential()
-        model.add(LSTM(32, input_shape=(MAX_SENTENCE_LENGTH, 256), return_sequences=True))
+        model.add(SimpleRNN(64, input_shape=(MAX_SENTENCE_LENGTH, 256), return_sequences=True))
         model.add(Dropout(.2))
-        model.add(LSTM(16))
+        model.add(SimpleRNN(32))
         model.add(Dense(len(languages), activation='softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
