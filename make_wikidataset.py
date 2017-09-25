@@ -4,6 +4,7 @@ from os import mkdir
 import urllib2
 import json
 from os.path import join as path
+import re
 
 WIKIDATASET_DIR = "wikidataset"
 LANGUAGES = [
@@ -61,6 +62,19 @@ def get_titles_from_english(english_title):
             raise Exception("found only {} titles".format(len(titles)))
 
 
+def sanitize_text(filename):
+    with open(filename) as f:
+        text = f.read()
+
+    text = text.lower()
+    text = re.sub("\s\s+", " ", text)
+    for ele in ['=', '>', '<', '"', '\t']:
+        text = text.replace(ele, "")
+
+    with open(filename, 'wb') as f:
+        f.write(text)
+
+
 if __name__ == "__main__":
     setup_folder()
 
@@ -81,4 +95,6 @@ if __name__ == "__main__":
                 print "\twriting '{}'...".format(title.encode("UTF-8"))
                 f.write(wiki.page(title).content.encode("UTF-8") + "\n")
 
+    for lang in LANGUAGES:
+        sanitize_text(path(WIKIDATASET_DIR, lang))
     print "DONE"
