@@ -30,7 +30,7 @@ PAGES_TITLES = [
     "Madrid",
     "Internet",
     "Education",
-    "Education",
+    "Music",
     "Wheel",
     "Fire",
     "Sea",
@@ -78,6 +78,7 @@ def sanitize_text(filename):
 if __name__ == "__main__":
     setup_folder()
 
+    print "fetching titles in all languages..."
     titles = [item for title in PAGES_TITLES for item in get_titles_from_english(title)]
     lang_sets = [
         {"lang": lang, "titles": filter(lambda x: x['lang'] == lang, titles)} for lang in LANGUAGES
@@ -95,6 +96,6 @@ if __name__ == "__main__":
                 print "\twriting '{}'...".format(title.encode("UTF-8"))
                 f.write(wiki.page(title).content.encode("UTF-8") + "\n")
 
-    for lang in LANGUAGES:
-        sanitize_text(path(WIKIDATASET_DIR, lang))
+    # for lang in LANGUAGES:
+    #     sanitize_text(path(WIKIDATASET_DIR, lang))
     print "DONE"

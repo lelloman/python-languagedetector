@@ -11,7 +11,7 @@ import numpy
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Dropout
-from keras.layers import SimpleRNN
+from keras.layers import SimpleRNN, LSTM
 from keras.callbacks import Callback
 from os import listdir
 from os.path import join as path
@@ -31,6 +31,8 @@ BATCH_SIZE = 256
 # for each epoch round a new set of training sentences is generated
 NB_EPOCH = 3
 EPOCH_ROUNDS = 50
+
+NETWORK_FLAVOR = LSTM
 
 # generate a set of languages from the dataset folder
 languages = [{'name': x, 'index': i} for i, x in enumerate(listdir(DATASET_DIR))]
@@ -81,9 +83,9 @@ def get_model():
         model = load_model()
     else:
         model = Sequential()
-        model.add(SimpleRNN(64, input_shape=(MAX_SENTENCE_LENGTH, 256), return_sequences=True))
+        model.add(NETWORK_FLAVOR(64, input_shape=(MAX_SENTENCE_LENGTH, 256), return_sequences=True))
         model.add(Dropout(.2))
-        model.add(SimpleRNN(32))
+        model.add(NETWORK_FLAVOR(32))
         model.add(Dense(len(languages), activation='softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -94,7 +96,7 @@ def get_model():
 if __name__ == '__main__':
 
     # since the network is small, on my computer is faster with cpu
-    with tf.device('/cpu:0'):
+    with tf.device('/gpu:0'):
         model = get_model()
 
         class EpochCallback(Callback):
