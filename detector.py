@@ -5,6 +5,7 @@ from constants import *
 import numpy
 import json
 from keras.models import model_from_json
+from utils import sanitize_text
 
 
 def load_model(json_filename=MODEL_JSON_FILENAME, weights_filename=MODEL_WEIGHT_FILENAME):
@@ -49,7 +50,7 @@ class LanguageDetector(object):
         '''
 
         # remove undesired characters and transform into bytearray
-        text = string_to_sequence(original_text)
+        text = sanitize_text(original_text)
 
         # cut sentences
         if len(text) > MAX_SENTENCE_LENGTH:

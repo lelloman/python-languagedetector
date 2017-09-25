@@ -20,12 +20,13 @@ import json
 from constants import *
 from detector import LanguageDetector, save_model, load_model
 import tensorflow as tf
+from utils import string_to_sequence
 
 # number of train sentences to generate
 # for each language
 TRAIN_SIZE = 5000
 
-LOAD_MODEL = 0
+LOAD_MODEL = 1
 BATCH_SIZE = 256
 
 # for each epoch round a new set of training sentences is generated
@@ -83,12 +84,12 @@ def get_model():
         model = load_model()
     else:
         model = Sequential()
-        model.add(NETWORK_FLAVOR(64, input_shape=(MAX_SENTENCE_LENGTH, 256), return_sequences=True))
+        model.add(NETWORK_FLAVOR(128, input_shape=(MAX_SENTENCE_LENGTH, 256), return_sequences=True))
         model.add(Dropout(.2))
-        model.add(NETWORK_FLAVOR(32))
+        model.add(NETWORK_FLAVOR(64))
         model.add(Dense(len(languages), activation='softmax'))
 
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
     print(model.summary())
     return model
 

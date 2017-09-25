@@ -4,7 +4,7 @@ from os import mkdir
 import urllib2
 import json
 from os.path import join as path
-import re
+from utils import sanitize_text
 
 WIKIDATASET_DIR = "wikidataset"
 LANGUAGES = [
@@ -62,40 +62,35 @@ def get_titles_from_english(english_title):
             raise Exception("found only {} titles".format(len(titles)))
 
 
-def sanitize_text(filename):
+def sanitize_file(filename):
     with open(filename) as f:
         text = f.read()
 
-    text = text.lower()
-    text = re.sub("\s\s+", " ", text)
-    for ele in ['=', '>', '<', '"', '\t']:
-        text = text.replace(ele, "")
-
     with open(filename, 'wb') as f:
-        f.write(text)
+        f.write(sanitize_text(text))
 
 
 if __name__ == "__main__":
-    setup_folder()
-
-    print "fetching titles in all languages..."
-    titles = [item for title in PAGES_TITLES for item in get_titles_from_english(title)]
-    lang_sets = [
-        {"lang": lang, "titles": filter(lambda x: x['lang'] == lang, titles)} for lang in LANGUAGES
-    ]
-
-    lang_sets = {lang['lang']: [x['*'] for x in lang['titles']] for lang in lang_sets}
-
-    print lang_sets
+    # setup_folder()
+    #
+    # print "fetching titles in all languages..."
+    # titles = [item for title in PAGES_TITLES for item in get_titles_from_english(title)]
+    # lang_sets = [
+    #     {"lang": lang, "titles": filter(lambda x: x['lang'] == lang, titles)} for lang in LANGUAGES
+    # ]
+    #
+    # lang_sets = {lang['lang']: [x['*'] for x in lang['titles']] for lang in lang_sets}
+    #
+    # print lang_sets
+    #
+    # for lang in LANGUAGES:
+    #     wiki.set_lang(lang)
+    #     print lang
+    #     with open(path(WIKIDATASET_DIR, lang), "wb") as f:
+    #         for title in lang_sets[lang]:
+    #             print "\twriting '{}'...".format(title.encode("UTF-8"))
+    #             f.write(wiki.page(title).content.encode("UTF-8") + "\n")
 
     for lang in LANGUAGES:
-        wiki.set_lang(lang)
-        print lang
-        with open(path(WIKIDATASET_DIR, lang), "wb") as f:
-            for title in lang_sets[lang]:
-                print "\twriting '{}'...".format(title.encode("UTF-8"))
-                f.write(wiki.page(title).content.encode("UTF-8") + "\n")
-
-    # for lang in LANGUAGES:
-    #     sanitize_text(path(WIKIDATASET_DIR, lang))
+        sanitize_file(path(WIKIDATASET_DIR, lang))
     print "DONE"

@@ -13,9 +13,6 @@ MIN_TRAIN_SAMPLE_LENGTH = 10
 MAX_TRAIN_SAMPLE_LENGTH = MAX_SENTENCE_LENGTH * 2
 
 
-def string_to_sequence(s):
-    return bytearray(re.sub(r'[^\w\s0-9\'-]', '', s.lower().replace('\n', ''), flags=re.UNICODE))
-
 
 def pad_word(word):
     out = bytearray(MAX_SENTENCE_LENGTH)
