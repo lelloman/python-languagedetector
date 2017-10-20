@@ -22,6 +22,7 @@ from detector import LanguageDetector, save_model, load_model
 import tensorflow as tf
 from utils import string_to_sequence
 
+
 # number of train sentences to generate
 # for each language
 TRAIN_SIZE = 5000
@@ -111,4 +112,4 @@ if __name__ == '__main__':
 
         detector = LanguageDetector(model=model, languages=languages)
         for t in TEST_TEXTS:
-            print(detector.analyze(t)['text'])
+            print(detector.analyze_pretty(t)['text'])

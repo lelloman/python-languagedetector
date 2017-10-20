@@ -89,6 +89,14 @@ class LanguageDetector(object):
                        enumerate(self.languages)]
         predictions.sort(key=lambda x: x[1], reverse=True)
 
+        return text, predictions, percents
+
+    def analyze_raw(self, original_text):
+        _, predictions, percents = self.analyze(original_text)
+        return predictions
+
+    def analyze_pretty(self, original_text):
+        text, predictions, percents = self.analyze(original_text)
         return {
             'text': '\n"{}"\n'.format(text) + '\n'.join([self.prediction_line.format(*x) for x in predictions]),
             'percents': percents
@@ -101,4 +109,4 @@ if __name__ == '__main__':
     with tf.device('/cpu:0'):
         detector = LanguageDetector()
         for t in TEST_TEXTS:
-            print(detector.analyze(t)['text'])
+            print(detector.analyze_pretty(t)['text'])

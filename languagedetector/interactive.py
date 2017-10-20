@@ -4,4 +4,4 @@
 detector = __import__('detector').LanguageDetector()
 
 while 1:
-    print detector.analyze(raw_input('write something\n'))['text']
+    print detector.analyze_pretty(raw_input('write something\n'))['text']
