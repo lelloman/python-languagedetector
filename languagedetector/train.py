@@ -34,7 +34,7 @@ BATCH_SIZE = 256
 NB_EPOCH = 3
 EPOCH_ROUNDS = 50
 
-NETWORK_FLAVOR = LSTM
+NETWORK_FLAVOR = SimpleRNN
 
 # generate a set of languages from the dataset folder
 languages = [{'name': x, 'index': i} for i, x in enumerate(listdir(DATASET_DIR))]
@@ -85,9 +85,10 @@ def get_model():
         model = load_model()
     else:
         model = Sequential()
-        model.add(NETWORK_FLAVOR(128, input_shape=(MAX_SENTENCE_LENGTH, 256), return_sequences=True))
+        model.add(NETWORK_FLAVOR(192, input_shape=(MAX_SENTENCE_LENGTH, 256), return_sequences=True, activation='relu'))
         model.add(Dropout(.2))
-        model.add(NETWORK_FLAVOR(64))
+        model.add(NETWORK_FLAVOR(114, activation='relu'))
+        model.add(Dropout(.2))
         model.add(Dense(len(languages), activation='softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])

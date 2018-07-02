@@ -16,14 +16,13 @@ LANGUAGES = [
     "it",
     "pt",
     "nl",
-
     "sv",
     "pl",
     "vi",
     "ru",
     "uk",
-    "fi",
-    "hu"
+    # "fi",
+    # "hu"
 ]
 
 PAGES_TITLES = [

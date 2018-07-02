@@ -45,10 +45,10 @@ TEST_CASES = (
         "Theo đài truyền hình Fox News, bà Alicia Legall, 46 tuổi, ra trình diện tòa hôm Thứ Ba về các tội danh, trộm cắp tiền bạc và danh tính cá nhân.",
         "Sau khi một thân nhân của ông Harp cho tiệm nữ trang Robbins Brothers ở Fullerton biết câu chuyện, chủ tiệm quyết định tặng ông chiếc nhẫn mới, cùng mẫu với chiếc nhẫn cũ, miễn phí"
     ]),
-    ('fi', [
-        "HS Digi -palvelusta löydät lehden koko sisällön digitaalisena ja jopa vielä enemmän. Voit lukea viimeisimmät uutiset kaikilla päätelaitteilla - tietokoneella, älypuhelimella ja tabletilla missä ja milloin vain.",
-        "Suomen metsien käyttöä EU:ssa puolustaa erään pienen puolueen presidenttiehdokas"
-    ]),
+    # ('fi', [
+    #     "HS Digi -palvelusta löydät lehden koko sisällön digitaalisena ja jopa vielä enemmän. Voit lukea viimeisimmät uutiset kaikilla päätelaitteilla - tietokoneella, älypuhelimella ja tabletilla missä ja milloin vain.",
+    #     "Suomen metsien käyttöä EU:ssa puolustaa erään pienen puolueen presidenttiehdokas"
+    # ]),
     ('ru', [
         "Надо сидеть и ждать. Станислав Белковский о новой эпохе политической истории России",
         "Цена расписок на акции \"Магнита\" на Лондонской фондовой бирже упала на 17% после публикации квартальной отчетности по МСФО, следует из данных биржи. На минимуме акции стоили $31,34 за бумагу. Капитализация компании составила $16 млрд, отмечал Bloomberg. На Московской бирже акции \"Магнита\" подешевели до 8492 рубля (–10,1%) при объеме торгов 7,187 млрд рублей."
@@ -57,10 +57,10 @@ TEST_CASES = (
         "У Google Play з'явилася можливість запустити додаток без установки",
         "Водночас Нищук додав, що до оголошення проекту-переможця неможливо говорити ні про обсяги витрат, ні про дату відкриття Меморіалу."
     ]),
-    ('hu', [
-        "Elértünk egy határig, amely cselekvésre kötelezi a kormányt – mondta a spanyol miniszterelnök Brüsszelben tartott sajtótájékoztatóján az uniós vezetők csúcstalálkozója után.",
-        "„Regionális összehasonlításban a magyar bérek továbbra is a középmezőny végén vannak. Ám ez a hátrány az idén már látható és a következő években is kitartó bérdinamikával csökkenthető lesz” – írja Horváth András, a TakarékBank elemzője."
-    ]),
+    # ('hu', [
+    #     "Elértünk egy határig, amely cselekvésre kötelezi a kormányt – mondta a spanyol miniszterelnök Brüsszelben tartott sajtótájékoztatóján az uniós vezetők csúcstalálkozója után.",
+    #     "„Regionális összehasonlításban a magyar bérek továbbra is a középmezőny végén vannak. Ám ez a hátrány az idén már látható és a következő években is kitartó bérdinamikával csökkenthető lesz” – írja Horváth András, a TakarékBank elemzője."
+    # ]),
     ('pl', [
         "Ronald Reagan w czasie swej prezydentury (1981-1989) “ściśle współpracując z Fundacją Heritage obniżył podatki, aby dokonać gospodarczego cudu lat 80.” – mówił Trump podczas spotkania Klubu Prezydenta tej fundacji, skupiającego najhojniejszych darczyńców tego waszyngtońskiego think tanku.",
         "Uroczystości w Waszyngtonie zakończyły Rok Kościuszkowski w USA"
@@ -80,7 +80,7 @@ def load_languages():
 
 class DetectorTest(unittest.TestCase):
     def test_exact_number_of_languages(self):
-        n_languages = 14
+        n_languages = 12
         languages = load_languages()
         self.assertEqual(len(languages), n_languages)
         self.assertEqual(len(TEST_CASES), n_languages)
