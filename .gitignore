@@ -1,3 +1,6 @@
 .idea/*
-constants.pyc
 detector.pyc
+common.pyc
+dataset/*
+model.json
+weights.h5
