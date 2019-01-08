@@ -1,6 +1,8 @@
 from detector import *
+import tensorflow as tf
 
-while 1:
-    model = load_model()
-    user_input = raw_input('write something\n')
-    print(print_prediction(model, user_input))
+with tf.device('/cpu:0'):
+    while 1:
+        model = load_model()
+        user_input = raw_input('write something\n')
+        print(analyze_pretty(model, user_input))

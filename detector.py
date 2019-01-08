@@ -31,12 +31,18 @@ def analyze(model, text):
         # predict the language for one sentence
         prediction = model.predict(X)[0]
 
-        for i, p in enumerate(prediction):
-            percents[i] += p
+        for j, p in enumerate(prediction):
+            percents[j] += p
 
     # average the predictions of all sentences
     for i in range(len(percents)):
         percents[i] /= len(sentences)
+
+    return percents
+
+
+def analyze_pretty(model, text):
+    percents = analyze(model, text)
 
     # prettify the output string
     predictions = [(lang['name'], percents[i], '|' * int(ROW_WIDTH * percents[i])) for i, lang in
@@ -44,20 +50,25 @@ def analyze(model, text):
     predictions.sort(key=lambda x: x[1], reverse=True)
 
     prediction_line = '{{:{}}}{{:.2f}} {{}}'.format(max([len(x['name']) + 2 for x in languages]))
-    return {
-        'text': '\n"{}"\n'.format(text) + '\n'.join([prediction_line.format(*x) for x in predictions]),
-        'percents': percents
-    }
+    return '\n"{}"\n'.format(text) + '\n'.join([prediction_line.format(*x) for x in predictions])
 
 
-def print_prediction(model, text):
-    print(analyze(model, text)['text'])
+def predict(model, text):
+    percents = analyze(model, text)
+    max_index = -1
+    max_value = 0
+    for i, v in enumerate(percents):
+        if v > max_value:
+            max_index = i
+            max_value = v
+
+    return languages[max_index]['name'] if (max_index > -1 and max_value > .5) else '??'
 
 
 def print_test_data():
     model = load_model()
     for t in TEST_SENTENCES:
-        print_prediction(model, t)
+        print(analyze_pretty(model, t))
 
 
 if __name__ == '__main__':
