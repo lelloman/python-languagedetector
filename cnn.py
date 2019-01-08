@@ -3,12 +3,16 @@
 
 from __future__ import print_function
 from common import *
+import tensorflow as tf
 import numpy
 import keras
 from keras.callbacks import Callback
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 from random import randint
+
+
+LOAD_MODEL = 1
 
 
 def make_train_data():
@@ -48,40 +52,46 @@ def make_model():
     model = Sequential()
     model.add(Conv2D(256, (2, 256), padding='valid', input_shape=input_shape))
     model.add(Activation('relu'))
-    model.add(Conv2D(128, (5, 1), padding='valid'))
+    model.add(Conv2D(192, (5, 1), padding='valid'))
     model.add(Activation('relu'))
     # model.add(Conv2D(64, (3, 1), padding='valid'))
     # model.add(Activation('relu'))
 
     model.add(Dropout(0.25))
     model.add(Flatten())
-    model.add(Dense(num_classes * 2))
+    model.add(Dense(num_classes * 3))
     model.add(Activation('relu'))
     model.add(Dropout(0.5))
     model.add(Dense(num_classes))
     model.add(Activation('softmax'))
-
-    # initiate RMSprop optimizer
-    opt = keras.optimizers.rmsprop(lr=0.001, decay=1e-9)
-    # opt = keras.optimizers.adagrad(lr = 0.001)
-
-    # Let's train the model using RMSprop
-    model.compile(loss='categorical_crossentropy',
-                  optimizer=opt,
-                  metrics=['accuracy'])
     return model
 
 
-model = make_model()
-X_train, Y_train = make_train_data()
+def get_model():
+    if LOAD_MODEL:
+        return load_model()
+    else:
+        return make_model()
 
-print(model.summary())
+
+with tf.device('/gpu:0'):
+    model = get_model()
+    opt = keras.optimizers.rmsprop(lr=0.001, decay=1e-9)
+    # opt = keras.optimizers.adagrad(lr = 0.0001)
+
+    model.compile(loss='categorical_crossentropy',
+                  optimizer=opt,
+                  metrics=['accuracy'])
+    X_train, Y_train = make_train_data()
+
+    print(model.summary())
 
 
-class EpochCallback(Callback):
-    def on_epoch_end(self, epoch, logs={}):
-        save_model(model)
+    class EpochCallback(Callback):
+        def on_epoch_end(self, epoch, logs={}):
+            save_model(model)
 
-model.fit(X_train, Y_train, epochs=EPOCHS, batch_size=BATCH_SIZE, callbacks=[EpochCallback()])
+
+    model.fit(X_train, Y_train, epochs=EPOCHS, batch_size=BATCH_SIZE, callbacks=[EpochCallback()])
 
 
