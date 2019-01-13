@@ -62,7 +62,7 @@ def predict(model, text):
             max_index = i
             max_value = v
 
-    return languages[max_index]['name'] if (max_index > -1 and max_value > .5) else '??'
+    return languages[max_index]['name'] if (max_index > -1 and max_value > .2) else '??'
 
 
 def print_test_data():

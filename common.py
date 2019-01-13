@@ -4,6 +4,11 @@ from __future__ import print_function
 import numpy as np
 import re
 from keras.models import model_from_json
+from os import sep
+from os.path import join as join_path
+
+THIS_FILE_DIR = sep.join(__file__.split(sep)[:-1])
+VALIDATION_SET_DIR = join_path(THIS_FILE_DIR, 'validationset')
 
 MAX_BYTES_PER_INPUT = 24
 SENTENCE_OVERLAP = 5
@@ -99,6 +104,7 @@ def pad_input(word):
 
 
 def sanitize_text(original_text):
+    original_text = original_text
     text = re.sub("\s\s+", " ", original_text.lower())
     for ele in ['=', '>', '<', '"', '\t', '\n']:
         text = text.replace(ele, "")

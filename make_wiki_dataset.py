@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#coding=UTF-8
+# coding=UTF-8
 from __future__ import print_function
 import wikipedia as wiki
 from shutil import rmtree
