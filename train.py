@@ -10,9 +10,9 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 from random import randint
 
-LOAD_MODEL = 0
-MIN_TRAIN_SAMPLE_LENGTH = 12
-MAX_TRAIN_SAMPLE_LENGTH = 32
+LOAD_MODEL = 1
+MIN_TRAIN_SAMPLE_LENGTH = 10
+MAX_TRAIN_SAMPLE_LENGTH = 36
 
 TRAIN_SIZE = 2000
 EPOCHS_ROUND = 10

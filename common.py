@@ -9,6 +9,9 @@ from os.path import join as join_path
 
 THIS_FILE_DIR = sep.join(__file__.split(sep)[:-1])
 VALIDATION_SET_DIR = join_path(THIS_FILE_DIR, 'validationset')
+COMMON_WORDS_DIR = join_path(THIS_FILE_DIR, 'commonwords')
+WIKI_DATA_SET_DIR = join_path(THIS_FILE_DIR, 'wikidataset')
+DATA_SET_DIR = join_path(THIS_FILE_DIR, 'dataset')
 
 MAX_BYTES_PER_INPUT = 24
 SENTENCE_OVERLAP = 5

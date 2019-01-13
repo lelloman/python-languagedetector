@@ -43,6 +43,6 @@ for key, value in sorted(validation_results.items(), key=lambda x: x[0]):
     total_tested += tested
     passed = value['passed']
     total_passed += passed
-    print("{}: {}/{}".format(key, passed, tested))
+    print("{}: {}/{} {:.2f}%".format(key, passed, tested, 100 * float(passed) / tested))
 
 print("total: {}/{} -> {:.2f}%".format(total_passed, total_tested, 100 * float(total_passed) / total_tested))
