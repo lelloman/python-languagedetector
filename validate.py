@@ -2,7 +2,6 @@ from __future__ import print_function
 from detector import *
 from os import listdir
 from sys import stdout
-import tensorflow as tf
 
 model = load_model()
 
@@ -26,7 +25,7 @@ validation_results = {
 
 i = 0
 for lang, text in validation_entries:
-    print('{:.1f}'.format(100. * i / len(validation_entries)), end='\r')
+    print('{:.1f}%'.format(100. * i / len(validation_entries)), end='\r')
     stdout.flush()
     i += 1
     result = validation_results[lang]

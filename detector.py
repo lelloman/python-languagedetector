@@ -63,13 +63,3 @@ def predict(model, text):
             max_value = v
 
     return languages[max_index]['name'] if (max_index > -1 and max_value > .2) else '??'
-
-
-def print_test_data():
-    model = load_model()
-    for t in TEST_SENTENCES:
-        print(analyze_pretty(model, t))
-
-
-if __name__ == '__main__':
-    print_test_data()
