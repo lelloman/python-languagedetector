@@ -12,7 +12,7 @@ from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling
 from random import randint
 
 
-LOAD_MODEL = 1
+LOAD_MODEL = 0
 
 
 def make_train_data():
@@ -32,8 +32,8 @@ def make_train_data():
             sentence = full_text[start:end]
             sentence = pad_input(sentence)
             train_data.append((sentence, index))
-        # one-hot vectors
 
+    # one-hot vectors
     X_train = numpy.zeros((TRAIN_SIZE * len(languages), MAX_BYTES_PER_INPUT, 256, 1), dtype=numpy.bool)
     Y_train = numpy.zeros((TRAIN_SIZE * len(languages), len(languages)), dtype=numpy.bool)
     for i, train_sample in enumerate(train_data):
@@ -52,10 +52,10 @@ def make_model():
     model = Sequential()
     model.add(Conv2D(256, (2, 256), padding='valid', input_shape=input_shape))
     model.add(Activation('relu'))
-    model.add(Conv2D(192, (5, 1), padding='valid'))
+    model.add(Conv2D(192, (3, 1), padding='valid'))
     model.add(Activation('relu'))
-    # model.add(Conv2D(64, (3, 1), padding='valid'))
-    # model.add(Activation('relu'))
+    model.add(Conv2D(128, (3, 1), padding='valid'))
+    model.add(Activation('relu'))
 
     model.add(Dropout(0.25))
     model.add(Flatten())

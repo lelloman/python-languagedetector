@@ -3,4 +3,8 @@ detector.pyc
 common.pyc
 dataset/*
 model.json
+full_model.json
+converted_model.tflite
 weights.h5
+wikidataset/
+dataset/

@@ -50,7 +50,7 @@ def analyze_pretty(model, text):
     predictions.sort(key=lambda x: x[1], reverse=True)
 
     prediction_line = '{{:{}}}{{:.2f}} {{}}'.format(max([len(x['name']) + 2 for x in languages]))
-    return '\n"{}"\n'.format(text) + '\n'.join([prediction_line.format(*x) for x in predictions])
+    return '\n"{}"\n'.format(text) + ' '.join([prediction_line.format(*x) for x in predictions])
 
 
 def predict(model, text):
