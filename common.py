@@ -30,6 +30,7 @@ languages = [
     'fr',
     'hu',
     'it',
+    'ja',
     'nl',
     'no',
     'pl',
@@ -75,7 +76,7 @@ def pad_input(word):
 def sanitize_text(original_text):
     original_text = original_text
     text = re.sub("\s\s+", " ", original_text.lower())
-    for ele in ['=', '>', '<', '"', '\t', '\n']:
+    for ele in ['=', '>', '<', '"', '\t', '\n', "'"]:
         text = text.replace(ele, "")
     return text
 

@@ -84,7 +84,7 @@ if __name__ == "__main__":
 
     print(lang_sets)
 
-    wiki.set_rate_limiting(True, timedelta(seconds=0.01))
+    # wiki.set_rate_limiting(True, timedelta(seconds=0.01))
 
     raw_input('Fetched all links, press enter to start the download.')
     for lang in language_names:

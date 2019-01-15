@@ -9,13 +9,17 @@ from keras.callbacks import Callback
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 from random import randint
+from os.path import isdir
+from make_validation_set import make_validation_set
+from random import shuffle
 
-LOAD_MODEL = 1
+
+LOAD_MODEL = 0
 MIN_TRAIN_SAMPLE_LENGTH = 10
 MAX_TRAIN_SAMPLE_LENGTH = 36
 
-TRAIN_SIZE = 2000
-EPOCHS_ROUND = 10
+TRAIN_SIZE = 3000
+EPOCHS_ROUND = 20
 EPOCHS_PER_TRAINING_SET = 2
 BATCH_SIZE = 100
 
@@ -50,17 +54,38 @@ def make_train_data():
     return X_train, Y_train
 
 
+def load_validation_set():
+    if not isdir(VALIDATION_SET_DIR):
+        answer = raw_input('Validation set dir does not exist, do you want to create the validation set?Y/n\n')
+        if answer.lower() == 'y':
+            make_validation_set()
+        else:
+            return []
+
+    data = []
+    for lang in languages:
+        with open(join_path(VALIDATION_SET_DIR, lang['name'])) as f:
+            sentences = [sanitize_text(x) for x in f.read().split('\n')]
+            for sentence in sentences:
+                for i in range(0, len(sentence) - MAX_BYTES_PER_INPUT, SENTENCE_OVERLAP):
+                    sub_sentence = pad_input(sentence[i: min(len(sentence), i+MAX_BYTES_PER_INPUT)])
+                    data.append((lang['index'], sub_sentence))
+
+    return data
+
+
 def make_model():
     input_shape = MAX_BYTES_PER_INPUT, 256, 1
     num_classes = len(languages)
 
     model = Sequential()
-    model.add(Conv2D(256, (2, 256), padding='valid', input_shape=input_shape))
+    model.add(Conv2D(512, (2, 256), padding='valid', input_shape=input_shape))
     model.add(Activation('relu'))
     model.add(Conv2D(256, (2, 1), padding='valid'))
     model.add(Activation('relu'))
-    model.add(Conv2D(128, (3, 1), padding='valid'))
+    model.add(Conv2D(256, (3, 1), padding='valid'))
     model.add(Activation('relu'))
+    model.add(MaxPooling2D(pool_size=(2, 1)))
     model.add(Conv2D(128, (3, 1), padding='valid'))
     model.add(Activation('relu'))
 
@@ -91,13 +116,25 @@ if __name__ == '__main__':
                   metrics=['accuracy'])
     print(model.summary())
 
+    validation_set = load_validation_set()
+    validation_data_size = 100
 
     class EpochCallback(Callback):
         def on_epoch_end(self, epoch, logs=None):
             save_model(model)
 
 
-    for i in range(EPOCHS_ROUND):
-        print('{}/{}'.format(i+1, EPOCHS_ROUND))
+    for epoch_round in range(EPOCHS_ROUND):
+        X_validation = numpy.zeros((validation_data_size, MAX_BYTES_PER_INPUT, 256, 1), dtype=numpy.bool)
+        Y_validation = numpy.zeros((validation_data_size, len(languages)), dtype=numpy.bool)
+        for i, validation_sample in enumerate(validation_set[:validation_data_size]):
+            word = validation_sample[1]
+            target = validation_sample[0]
+            for t, char in enumerate(word):
+                X_validation[i, t, char] = 1
+                Y_validation[i, target] = 1
+
+        print('{}/{}'.format(epoch_round + 1, EPOCHS_ROUND))
         X_train, Y_train = make_train_data()
-        model.fit(X_train, Y_train, epochs=EPOCHS_PER_TRAINING_SET, batch_size=BATCH_SIZE, callbacks=[EpochCallback()])
+        model.fit(X_train, Y_train, epochs=EPOCHS_PER_TRAINING_SET, batch_size=BATCH_SIZE, callbacks=[EpochCallback()],
+                  validation_data=(X_validation, Y_validation))

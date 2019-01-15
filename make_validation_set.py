@@ -41,6 +41,10 @@ rss_sources = {
         'https://www.fanpage.it/feed/',
         'http://www.ansa.it/campania/notizie/campania_rss.xml'
     ],
+    'ja': [
+        'http://feeds.cnn.co.jp/rss/cnn/cnn.rdf',
+        'https://thebridge.jp/feed'
+    ],
     'nl': [
         'https://www.telegraaf.nl/rss',
         'https://www.ad.nl/nieuws/rss.xml'
@@ -84,7 +88,7 @@ def text_from_html(html):
     return bs(html, "lxml").text
 
 
-if __name__ == '__main__':
+def make_validation_set():
     if isdir(VALIDATION_SET_DIR):
         user_input = raw_input("Validation set directory already exists, should delete it and re-fetch the data? Y/N\n")
         if user_input.lower() != 'y':
@@ -97,7 +101,7 @@ if __name__ == '__main__':
     print("Creating new directory", VALIDATION_SET_DIR)
     mkdir(VALIDATION_SET_DIR)
 
-    # for lang in ['vi']:
+    # for lang in ['ja']:
     for lang in languages_names:
         print(lang)
         if lang not in rss_sources:
@@ -118,3 +122,7 @@ if __name__ == '__main__':
                     f.write('\n')
                     # print('\t', title, ' -> ', summary, ' -> ', validation_text)
                 print("\tfound", len(items), "feeds in", source)
+
+
+if __name__ == '__main__':
+    make_validation_set()
