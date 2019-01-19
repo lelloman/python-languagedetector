@@ -7,7 +7,7 @@ model = load_model()
 
 validation_entries = []
 
-for lang in listdir(VALIDATION_SET_DIR):
+for lang in filter(lambda x: x in languages_names, listdir(VALIDATION_SET_DIR)):
     with open(join_path(VALIDATION_SET_DIR, lang), 'r') as f:
         sentences = f.read().split('\n')
         for sentence in sentences:

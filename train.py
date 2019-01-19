@@ -13,21 +13,20 @@ from os.path import isdir
 from make_validation_set import make_validation_set
 from random import shuffle
 
-
 LOAD_MODEL = 0
-MIN_TRAIN_SAMPLE_LENGTH = 10
-MAX_TRAIN_SAMPLE_LENGTH = 36
+MIN_TRAIN_SAMPLE_LENGTH = MAX_BYTES_PER_INPUT / 2
+MAX_TRAIN_SAMPLE_LENGTH = MAX_BYTES_PER_INPUT * 2
 
-TRAIN_SIZE = 3000
-EPOCHS_ROUND = 20
+TRAIN_SIZE = 5000
+EPOCHS_ROUND = 50
 EPOCHS_PER_TRAINING_SET = 2
 BATCH_SIZE = 100
 
 
 def make_train_data():
     train_data = []
-    for index, lang in enumerate(languages):
-        full_text = open('dataset/{}'.format(lang['name'])).read()
+    for index, lang in enumerate(languages_names):
+        full_text = open('dataset/{}'.format(lang)).read()
         text_size = len(full_text)
         for _ in range(TRAIN_SIZE):
             # so that a share of the training set will have sentences of length MAX_SENTENCE_LENGTH
@@ -68,7 +67,7 @@ def load_validation_set():
             sentences = [sanitize_text(x) for x in f.read().split('\n')]
             for sentence in sentences:
                 for i in range(0, len(sentence) - MAX_BYTES_PER_INPUT, SENTENCE_OVERLAP):
-                    sub_sentence = pad_input(sentence[i: min(len(sentence), i+MAX_BYTES_PER_INPUT)])
+                    sub_sentence = pad_input(sentence[i: min(len(sentence), i + MAX_BYTES_PER_INPUT)])
                     data.append((lang['index'], sub_sentence))
 
     return data
@@ -79,20 +78,21 @@ def make_model():
     num_classes = len(languages)
 
     model = Sequential()
-    model.add(Conv2D(512, (2, 256), padding='valid', input_shape=input_shape))
-    model.add(Activation('relu'))
-    model.add(Conv2D(256, (2, 1), padding='valid'))
-    model.add(Activation('relu'))
-    model.add(Conv2D(256, (3, 1), padding='valid'))
-    model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 1)))
-    model.add(Conv2D(128, (3, 1), padding='valid'))
-    model.add(Activation('relu'))
+    first_conv_channels = 256
 
-    model.add(Dropout(0.25))
-    model.add(Flatten())
-    model.add(Dense(num_classes * 3))
+    model.add(Conv2D(first_conv_channels, (2, 256), strides=1, padding='valid', input_shape=input_shape))
     model.add(Activation('relu'))
+    model.add(keras.layers.BatchNormalization())
+
+    model.add(Conv2D(first_conv_channels, (2, 1), strides=1, padding='valid', input_shape=input_shape))
+    model.add(Activation('relu'))
+    model.add(keras.layers.Reshape(target_shape=(MAX_BYTES_PER_INPUT-2, first_conv_channels)))
+    model.add(keras.layers.BatchNormalization())
+
+    model.add(keras.layers.LSTM(num_classes * 5, return_sequences=True))
+    model.add(keras.layers.BatchNormalization())
+    model.add(keras.layers.LSTM(num_classes * 3, return_sequences=False))
+
     model.add(Dropout(0.5))
     model.add(Dense(num_classes))
     model.add(Activation('softmax'))
@@ -108,7 +108,7 @@ def get_model():
 
 if __name__ == '__main__':
     model = get_model()
-    opt = keras.optimizers.rmsprop(lr=0.001, decay=1e-9)
+    opt = keras.optimizers.rmsprop(lr=0.00001)
     # opt = keras.optimizers.adagrad(lr = 0.0001)
 
     model.compile(loss='categorical_crossentropy',
@@ -117,23 +117,24 @@ if __name__ == '__main__':
     print(model.summary())
 
     validation_set = load_validation_set()
-    validation_data_size = 100
+    validation_data_size = len(validation_set)
+
 
     class EpochCallback(Callback):
         def on_epoch_end(self, epoch, logs=None):
             save_model(model)
 
 
-    for epoch_round in range(EPOCHS_ROUND):
-        X_validation = numpy.zeros((validation_data_size, MAX_BYTES_PER_INPUT, 256, 1), dtype=numpy.bool)
-        Y_validation = numpy.zeros((validation_data_size, len(languages)), dtype=numpy.bool)
-        for i, validation_sample in enumerate(validation_set[:validation_data_size]):
-            word = validation_sample[1]
-            target = validation_sample[0]
-            for t, char in enumerate(word):
-                X_validation[i, t, char] = 1
-                Y_validation[i, target] = 1
+    X_validation = numpy.zeros((validation_data_size, MAX_BYTES_PER_INPUT, 256, 1), dtype=numpy.bool)
+    Y_validation = numpy.zeros((validation_data_size, len(languages)), dtype=numpy.bool)
+    for i, validation_sample in enumerate(validation_set[:validation_data_size]):
+        word = validation_sample[1]
+        target = validation_sample[0]
+        for t, char in enumerate(word):
+            X_validation[i, t, char] = 1
+            Y_validation[i, target] = 1
 
+    for epoch_round in range(EPOCHS_ROUND):
         print('{}/{}'.format(epoch_round + 1, EPOCHS_ROUND))
         X_train, Y_train = make_train_data()
         model.fit(X_train, Y_train, epochs=EPOCHS_PER_TRAINING_SET, batch_size=BATCH_SIZE, callbacks=[EpochCallback()],

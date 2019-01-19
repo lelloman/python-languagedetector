@@ -13,40 +13,61 @@ COMMON_WORDS_DIR = join_path(THIS_FILE_DIR, 'commonwords')
 WIKI_DATA_SET_DIR = join_path(THIS_FILE_DIR, 'wikidataset')
 DATA_SET_DIR = join_path(THIS_FILE_DIR, 'dataset')
 
-MAX_BYTES_PER_INPUT = 24
-SENTENCE_OVERLAP = 5
+MAX_BYTES_PER_INPUT = 36
+SENTENCE_OVERLAP = 24
 
 ROW_WIDTH = 20
 
 MODEL_JSON_FILENAME = 'model.json'
 WEIGHTS_FILENAME = 'weights.h5'
 
-languages = [
-    'da',
-    'de',
-    'en',
+languages_names = [
+    #'da',
+    #'de',
+    #'en',
     'es',
-    'fi',
-    'fr',
-    'hu',
+    #'fi',
+    #'fr',
+    #'hu',
     'it',
-    'ja',
-    'nl',
-    'no',
-    'pl',
+    #'ja',
+    #'nl',
+    #'no',
+    #'pl',
     'pt',
-    'ro',
-    'ru',
-    'sv',
-    'uk',
-    'vi'
+    #'ro',
+    #'ru',
+    #'sv',
+    #'uk',
+    #'vi'
 ]
+
+words_list_files = {
+    'da': '/usr/share/dict/danish UTF-8',
+    'de': '/usr/share/dict/ngerman UTF-8',
+    'en': '/usr/share/dict/american-english UTF-8',
+    'es': '/usr/share/dict/spanish UTF-8',
+    'fi': None,
+    'fr': '/usr/share/dict/french UTF-8',
+    'hu': None,
+    'it': '/usr/share/dict/italian UTF-8',
+    'ja': None,
+    'nl': '/usr/share/dict/dutch UTF-8',
+    'no': '/usr/share/dict/nynorsk ISO-8859-1',
+    'pl': None,
+    'pt': '/usr/share/dict/portuguese UTF-8',
+    'ro': None,
+    'ru': None,
+    'sv': '/usr/share/dict/swedish ISO-8859-1',
+    'uk': '/usr/share/dict/ukrainian UTF-8',
+    'vi': None,
+}
 
 languages = [
     {
         'name': unicode(x),
         'index': i
-    } for i, x in enumerate(languages)
+    } for i, x in enumerate(languages_names)
 ]
 print(len(languages), 'languages:', ','.join(language['name'] for language in languages))
 
