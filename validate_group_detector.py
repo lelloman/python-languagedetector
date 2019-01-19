@@ -3,7 +3,7 @@ from detector import *
 from os import listdir
 from sys import stdout
 
-model = load_model()
+model = load_model(GROUP_DETECTOR_MODEL_NAME)
 
 validation_entries = []
 
@@ -30,9 +30,10 @@ for lang, text in validation_entries:
     i += 1
     result = validation_results[lang]
     result['tested'] += 1
-    predicted = predict(model, text)
-    if lang != predicted:
-        print(lang, 'predicted as', predicted, 'for "{}"'.format(text))
+    predicted = predict_group(model, text)
+    predicted_group = groups[language_group_indices[lang]]['name']
+    if predicted_group != predicted:
+        print(lang, 'predicted as', predicted, 'for "{}"'.format(sanitize_text(text)))
     else:
         result['passed'] += 1
 

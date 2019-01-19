@@ -53,7 +53,7 @@ def analyze_pretty(model, text):
     return '\n"{}"\n'.format(text) + ' '.join([prediction_line.format(*x) for x in predictions])
 
 
-def predict(model, text):
+def predict_group(model, text):
     percents = analyze(model, text)
     max_index = -1
     max_value = 0
@@ -62,4 +62,4 @@ def predict(model, text):
             max_index = i
             max_value = v
 
-    return languages[max_index]['name'] if (max_index > -1 and max_value > .2) else '??'
+    return groups[max_index]['name'] if (max_index > -1 and max_value > .2) else '??'

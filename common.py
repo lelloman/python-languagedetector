@@ -18,28 +18,39 @@ SENTENCE_OVERLAP = 24
 
 ROW_WIDTH = 20
 
-MODEL_JSON_FILENAME = 'model.json'
-WEIGHTS_FILENAME = 'weights.h5'
+MODEL_JSON_FILENAME = 'model_{}.json'
+WEIGHTS_FILENAME = 'weights_{}.h5'
+
+GROUP_DETECTOR_MODEL_NAME = "group"
 
 languages_names = [
-    #'da',
-    #'de',
-    #'en',
+    'da',
+    'de',
+    'en',
     'es',
-    #'fi',
-    #'fr',
-    #'hu',
+    'fi',
+    'fr',
+    'hu',
     'it',
-    #'ja',
-    #'nl',
-    #'no',
-    #'pl',
+    'ja',
+    'nl',
+    'no',
+    'pl',
     'pt',
-    #'ro',
-    #'ru',
-    #'sv',
-    #'uk',
-    #'vi'
+    'ro',
+    'ru',
+    'sv',
+    'uk',
+    'vi'
+]
+
+languages_groups_names = [
+    'es-fr-it-pt-ro',
+    'da-no-sv',
+    'de-en-nl',
+    'ru-uk',
+    'ja-vi',
+    'fi-hu-pl'
 ]
 
 words_list_files = {
@@ -69,23 +80,38 @@ languages = [
         'index': i
     } for i, x in enumerate(languages_names)
 ]
-print(len(languages), 'languages:', ','.join(language['name'] for language in languages))
+
+groups = []
+for i, group_name in enumerate(languages_groups_names):
+    groups.append({
+        'name': group_name,
+        'index': i,
+        'lang_names': group_name.split('-')
+    })
+
+language_group_indices = {}
+for lang in languages_names:
+    language_group_indices[lang] = [group['index'] for group in groups if lang in group['lang_names']][0]
+
+print(len(languages), 'languages:', ', '.join(name for name in languages_names))
+print(len(groups), 'groups:', ', '.join(group['name'] for group in groups))
+print('language_troup_indices', language_group_indices)
 
 
-def load_model():
-    json_file = open(MODEL_JSON_FILENAME, 'r')
+def load_model(name):
+    json_file = open(MODEL_JSON_FILENAME.format(name), 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     model = model_from_json(loaded_model_json)
-    model.load_weights(WEIGHTS_FILENAME)
+    model.load_weights(WEIGHTS_FILENAME.format(name))
     return model
 
 
-def save_model(model):
+def save_model(model, name):
     model_json = model.to_json()
-    with open(MODEL_JSON_FILENAME, "w") as json_file:
+    with open(MODEL_JSON_FILENAME.format(name), "w") as json_file:
         json_file.write(model_json)
-    model.save_weights(WEIGHTS_FILENAME)
+    model.save_weights(WEIGHTS_FILENAME.format(name))
 
 
 def pad_input(word):
@@ -97,8 +123,7 @@ def pad_input(word):
 def sanitize_text(original_text):
     original_text = original_text
     text = re.sub("\s\s+", " ", original_text.lower())
-    for ele in ['=', '>', '<', '"', '\t', '\n', "'"]:
-        text = text.replace(ele, "")
+    text = re.sub('[=><\n\t:\-,.0-9"]', " ", text)
     return text
 
 
