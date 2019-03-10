@@ -6,13 +6,12 @@ from common import *
 import numpy
 import keras
 from keras.callbacks import Callback
-from keras.models import Sequential
+from keras.models import Model
 from keras.layers import *
 from random import randint
 from os.path import isdir
 from make_validation_set import make_validation_set
 from random import shuffle
-
 
 LOAD_MODEL = 0
 MIN_TRAIN_SAMPLE_LENGTH = MAX_BYTES_PER_INPUT / 2
@@ -79,36 +78,34 @@ def make_model():
     input_shape = MAX_BYTES_PER_INPUT, 256, 1
     num_classes = len(groups)
 
-    model = Sequential()
-    first_conv_channels = 192
-    second_conv_channels = 192
-    third_conv_channels = 32
+    first_conv_channels = 2048
+    second_conv_channels = 512
+    third_conv_channels = 256
 
-    model.add(Conv2D(first_conv_channels, (2, 256), strides=1, padding='valid', input_shape=input_shape))
-    model.add(Activation('relu'))
-    model.add(BatchNormalization())
+    input = Input(shape=input_shape)
 
-    model.add(Conv2D(second_conv_channels, (2, 1), strides=2, padding='valid', input_shape=input_shape))
-    model.add(Activation('relu'))
-    model.add(BatchNormalization())
+    conv1 = Conv2D(first_conv_channels, (2, 256), strides=1, padding='valid', input_shape=input_shape,
+                   activation='relu')(input)
+    batch_norm1 = BatchNormalization()(conv1)
 
-    model.add(MaxPooling2D(pool_size=(2, 1)))
+    conv2 = Conv2D(second_conv_channels, (2, 1), strides=1, padding='valid', input_shape=input_shape,
+                   activation='relu')(batch_norm1)
+    batch_norm2 = BatchNormalization()(conv2)
 
-    model.add(Conv2D(third_conv_channels, (2, 1), strides=2, padding='valid', input_shape=input_shape))
-    model.add(Activation('relu'))
-    model.add(BatchNormalization())
+    max_pool = MaxPooling2D(pool_size=(3, 1))(batch_norm2)
 
-    model.add(Reshape(target_shape=(4, 32)))
+    conv3 = Conv2D(third_conv_channels, (2, 1), strides=1, padding='valid', input_shape=input_shape,
+                   activation='relu')(batch_norm2)
+    batch_norm3 = BatchNormalization()(conv3)
 
-    model.add(LSTM(num_classes * 3, return_sequences=True))
-    model.add(BatchNormalization())
+    flatten = Flatten()(batch_norm3)
 
-    model.add(Dropout(0.333))
-    model.add(LSTM(num_classes * 2, return_sequences=False))
+    dropout1 = Dropout(0.333)(flatten)
+    # dense1 = Dense(num_classes * 5, activation='relu')(dropout1)
 
-    model.add(Dropout(0.5))
-    model.add(Dense(num_classes))
-    model.add(Activation('softmax'))
+    output = Dense(num_classes, activation='softmax', name='main_output')(BatchNormalization()(dropout1))
+
+    model = Model(input, output)
     return model
 
 
@@ -126,7 +123,8 @@ def train_group_detector():
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=opt,
-                  metrics=['accuracy'])
+                  metrics=['accuracy'],
+                  loss_weights={'main_output': 1.0})
     print(model.summary())
 
     validation_set = load_validation_set()
@@ -148,8 +146,10 @@ def train_group_detector():
     for epoch_round in range(EPOCHS_ROUND):
         print('{}/{}'.format(epoch_round + 1, EPOCHS_ROUND))
         X_train, Y_train = make_train_data()
-        model.fit(X_train, Y_train, epochs=EPOCHS_PER_TRAINING_SET, batch_size=BATCH_SIZE, callbacks=[EpochCallback()],
+        model.fit(X_train, Y_train, epochs=EPOCHS_PER_TRAINING_SET, batch_size=BATCH_SIZE,
+                  callbacks=[EpochCallback()],
                   validation_data=(X_validation, Y_validation))
+        save_model(model, GROUP_DETECTOR_MODEL_NAME)
 
 
 if __name__ == '__main__':

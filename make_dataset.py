@@ -38,6 +38,6 @@ for lang in languages_names:
         print("\t writing dataset entry...")
         f.write(wiki_text.encode('UTF-8'))
         f.write(' '.join(common_words_shuffles).encode('UTF-8'))
-        for _ in range(3):
+        for _ in range(1):
             shuffle(words)
             f.write(' '.join(words).encode('UTF-8'))
