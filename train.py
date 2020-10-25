@@ -2,10 +2,10 @@
 # coding=UTF-8
 from common import *
 import numpy
-import keras
-from keras.callbacks import Callback
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
+from tensorflow import keras
+from tensorflow.keras.callbacks import Callback
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 from random import randint
 
 LOAD_MODEL = 0
@@ -80,6 +80,8 @@ def get_model():
 
 
 if __name__ == '__main__':
+    fix_gpu_memory_growth()
+
     model = get_model()
     opt = keras.optimizers.RMSprop(lr=0.001, decay=1e-9)
     # opt = keras.optimizers.adagrad(lr = 0.0001)

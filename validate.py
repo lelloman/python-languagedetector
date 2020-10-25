@@ -2,6 +2,7 @@ from detector import *
 from os import listdir
 from sys import stdout
 
+fix_gpu_memory_growth()
 model = load_model()
 
 validation_entries = []

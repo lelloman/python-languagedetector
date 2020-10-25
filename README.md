@@ -6,7 +6,7 @@ The idea here is that even if we don't actually know a language we might be able
 The model consists of a few convolutional layers with a softmax classifier on top. The dataset is generated from wikipedia pages, they can be downloaded by running [make_wiki_dataset.py](https://github.com/lelloman/python-languagedetector/blob/master/make_wiki_dataset.py).
 
 requires:
-- python 2.7 (trying to keep it compatible with python 3 but never tested it)
+- python 3
 - tensorflow
 - keras
 - wikipedia
@@ -21,3 +21,5 @@ In order to have a working model run:
 - [interactive.py](https://github.com/lelloman/python-languagedetector/blob/master/interactive.py) makes predictions for inputs provided via command line.
 
 The trained model can also be exported as TensorflowLite format with [to_tensorflow_lite.py](https://github.com/lelloman/python-languagedetector/blob/master/to_tensorflow_lite.py). An Android implementation that runs the TensorflowLite model is also available [here](https://github.com/lelloman/android-language-detector)
+
+Run with docker image `docker run --gpus all -v /path/to/project/on/host:/languagedetector -it tensorflow/tensorflow:latest-gpu bash`

@@ -3,9 +3,10 @@
 from __future__ import print_function
 import numpy as np
 import re
-from keras.models import model_from_json
+from tensorflow.keras.models import model_from_json
 from os import sep
 from os.path import join as join_path
+import tensorflow as tf
 
 THIS_FILE_DIR = sep.join(__file__.split(sep)[:-1])
 VALIDATION_SET_DIR = join_path(THIS_FILE_DIR, 'validationset')
@@ -80,3 +81,17 @@ def sanitize_text(original_text):
 def softmax(x):
     e_x = np.exp(x - np.max(x))
     return e_x / e_x.sum(axis=0)
+
+
+def fix_gpu_memory_growth():
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    if gpus:
+        try:
+            # Currently, memory growth needs to be the same across GPUs
+            for gpu in gpus:
+                tf.config.experimental.set_memory_growth(gpu, True)
+            logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+            print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+        except RuntimeError as e:
+            # Memory growth must be set before GPUs have been initialized
+            print(e)
