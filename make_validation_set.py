@@ -1,8 +1,7 @@
-from __future__ import print_function
 from common import *
 from os.path import join as join_path, isdir
 from shutil import rmtree
-from os import mkdir, sep
+from os import mkdir
 import feedparser
 from bs4 import BeautifulSoup as bs
 
@@ -86,7 +85,7 @@ def text_from_html(html):
 
 if __name__ == '__main__':
     if isdir(VALIDATION_SET_DIR):
-        user_input = raw_input("Validation set directory already exists, should delete it and re-fetch the data? Y/N\n")
+        user_input = input("Validation set directory already exists, should delete it and re-fetch the data? Y/N\n")
         if user_input.lower() != 'y':
             print("Nothing to do.")
             exit(0)
@@ -104,7 +103,7 @@ if __name__ == '__main__':
             print("\tSkipping", lang, "as there are no sources.")
             continue
 
-        with open(join_path(VALIDATION_SET_DIR, lang), 'w') as f:
+        with open(join_path(VALIDATION_SET_DIR, lang), 'wb') as f:
             for source in rss_sources[lang]:
                 feed = feedparser.parse(source)
                 items = feed.entries
@@ -115,6 +114,6 @@ if __name__ == '__main__':
                     if len(validation_text) > 200:
                         validation_text = validation_text[:200]
                     f.write(validation_text.encode("UTF-8"))
-                    f.write('\n')
+                    f.write('\n'.encode("UTF-8"))
                     # print('\t', title, ' -> ', summary, ' -> ', validation_text)
                 print("\tfound", len(items), "feeds in", source)

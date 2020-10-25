@@ -28,7 +28,7 @@ languages = [
     'hu',
     'it',
     'nl',
-    'no',
+    # 'no',
     'pl',
     'pt',
     'ro',
@@ -40,7 +40,7 @@ languages = [
 
 languages = [
     {
-        'name': unicode(x),
+        'name': x,
         'index': i
     } for i, x in enumerate(languages)
 ]

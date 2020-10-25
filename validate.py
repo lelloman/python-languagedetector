@@ -1,4 +1,3 @@
-from __future__ import print_function
 from detector import *
 from os import listdir
 from sys import stdout

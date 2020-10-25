@@ -7,4 +7,6 @@ full_model.json
 converted_model.tflite
 weights.h5
 wikidataset/
+wikidataset_raw/
+validationset/
 dataset/

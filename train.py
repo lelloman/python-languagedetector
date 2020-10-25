@@ -1,7 +1,5 @@
 #!/usr/bin/python
 # coding=UTF-8
-
-from __future__ import print_function
 from common import *
 import numpy
 import keras
@@ -23,7 +21,7 @@ BATCH_SIZE = 100
 def make_train_data():
     train_data = []
     for index, lang in enumerate(languages):
-        full_text = open('dataset/{}'.format(lang['name'])).read()
+        full_text = open('dataset/{}'.format(lang['name']), "rb").read()
         text_size = len(full_text)
         for _ in range(TRAIN_SIZE):
             # so that a share of the training set will have sentences of length MAX_SENTENCE_LENGTH
@@ -83,7 +81,7 @@ def get_model():
 
 if __name__ == '__main__':
     model = get_model()
-    opt = keras.optimizers.rmsprop(lr=0.001, decay=1e-9)
+    opt = keras.optimizers.RMSprop(lr=0.001, decay=1e-9)
     # opt = keras.optimizers.adagrad(lr = 0.0001)
 
     model.compile(loss='categorical_crossentropy',

@@ -5,8 +5,8 @@ from common import *
 import numpy as np
 
 
-def analyze(model, text):
-    text = sanitize_text(text)
+def analyze(model, text_raw):
+    text = sanitize_text(text_raw).encode("UTF-8")
     if len(text) > MAX_BYTES_PER_INPUT:
         sentences = []
         for i in range(0, len(text) - MAX_BYTES_PER_INPUT, SENTENCE_OVERLAP):
